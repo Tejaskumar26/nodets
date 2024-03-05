@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "tejas",
+    "password": 2611,
+    "database": "nextdb",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "tejas",
+    "password": 2611,
+    "database": "nextdb",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "tejas",
+    "password": 2611,
+    "database": "nextdb",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
