@@ -1,5 +1,6 @@
 import { Response, Request } from 'express'
 import db from '../../models'
+import s3 from '../../utils/s3bucket';
 
 export const sample = async (req: Request, res: Response) => {
     try {
@@ -62,5 +63,36 @@ export const editUser = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Something went wrong' });
+    }
+}
+
+export const uploadImage = async (req: Request, res: Response) => {
+    try {
+        const imageFilter = function (req: any, file: any, cb: any) {
+            if (file) {
+                req.file = file
+            }
+            if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
+                req.fileValidationError = 'Only image files are allowed!'
+                return cb(new Error('Only image files are allowed!'), false)
+            }
+            if (file.fileSize > 3145728) {
+                req.fileValidationError = 'File size not be greater than 3 MB'
+                return cb(new Error('File size not be greater than 3 MB'), false)
+            }
+            cb(null, true)
+        }
+
+        const uploadedFile = await s3(req, res, 'user/', imageFilter)
+        if (uploadedFile) {
+            let filePath = process.env.S3_BUCKET_BASE_URL + '/' + uploadedFile
+            return res.status(200).json({ message: 'Success', data: filePath });
+        } else {
+            return res.status(400).json({ message: 'Unable to upload' });
+        }
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Something went wrong', data: error });
     }
 }

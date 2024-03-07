@@ -6,7 +6,7 @@ import { DataTypes } from 'sequelize';
 import process from 'process'; // Renamed process to avoid naming conflict
 const basename = path.basename(__filename);
 const env: string = (process.env.NODE_ENV as string) || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require(__dirname + '/../config/config.js')[env];
 const db: { [key: string]: any } = {}; // Type definition for db object
 
 let sequelize: Sequelize;
