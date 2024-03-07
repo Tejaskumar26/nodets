@@ -1,7 +1,7 @@
 import { Response, Request } from 'express'
 import db from '../../models'
 import s3 from '../../utils/s3bucket';
-
+import { getLimitAndOffset, pagination } from '../../utils/helper';
 export const sample = async (req: Request, res: Response) => {
     try {
         const sampleData = {
@@ -33,8 +33,21 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const getUSers = async (req: Request, res: Response) => {
     try {
-        const users = await db.User.findAll()
-        return res.status(200).json({ message: 'Success', data: users });
+        const page = 2;
+        const page_size = 0;
+        const { limit, offset, pageSize } = await getLimitAndOffset(page, page_size)
+        const { count, rows } = await db.User.findAndCountAll({
+            limit: limit,
+            offset: offset
+        });
+
+        const paginationData = await pagination(page, pageSize, count)
+        return res.status(200).json({
+            message: 'Success', data: {
+                users: rows,
+                pagination: paginationData
+            }
+        });
 
     } catch (error) {
         console.log(error);
